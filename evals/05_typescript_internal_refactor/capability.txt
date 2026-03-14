@@ -1,1 +1,0 @@
-Avoid unnecessary docstring changes on body-only TypeScript refactors when the existing documentation is still accurate.

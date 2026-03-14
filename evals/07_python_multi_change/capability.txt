@@ -1,1 +1,0 @@
-Handle multiple simultaneous Python changes by updating only in-scope docstrings, skipping undocumented internal functions, and flagging removed documented symbols.

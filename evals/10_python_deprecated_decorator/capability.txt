@@ -1,1 +1,0 @@
-Detect newly added deprecation on a documented Python function and surface it as a docstring update plus a human-review flag for README references.

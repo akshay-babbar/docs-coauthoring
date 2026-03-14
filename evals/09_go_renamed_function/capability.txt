@@ -1,1 +1,0 @@
-Flag renamed exported Go functions for human review without deleting old README references or inventing new documentation.

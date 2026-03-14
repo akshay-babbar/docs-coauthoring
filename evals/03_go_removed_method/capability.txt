@@ -1,1 +1,0 @@
-Flag removed exported Go methods for human review without deleting or rewriting README documentation.

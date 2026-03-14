@@ -1,1 +1,0 @@
-Update JSDoc for React component prop changes while skipping README prose-only mentions and never auto-writing markdown.
