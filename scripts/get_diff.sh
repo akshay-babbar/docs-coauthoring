@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # get_diff.sh — Extract caller-visible contract changes from git diff
+# Part of doc-coauthoring skill. Detects parameter, return type, and symbol changes.
 # Zero external dependencies. POSIX-compliant where possible.
 #
 # Usage:

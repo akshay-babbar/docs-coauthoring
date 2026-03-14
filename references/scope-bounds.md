@@ -5,7 +5,7 @@ These boundaries are non-negotiable.
 
 ## What Is In Scope
 
-A symbol is **in scope** if it already has a docstring or fence-marked section,
+A symbol is **in scope** if it already has a docstring or README mention,
 regardless of visibility. This includes:
 
 - Public functions and classes
@@ -37,33 +37,38 @@ to its callers inside the codebase, even if it is never exported.
 | `LICENSE*` | Legal document |
 | `.github/*.md` | Issue/PR templates, community health files |
 
+## Markdown Files — Propose-Only
+
+All README and markdown documentation updates are **propose-only**. The skill
+never auto-writes to markdown files. It finds symbol mentions in code spans
+(`` `fn_name` ``) and table cells, generates a proposed patch, and includes it
+in the report for human review.
+
 ## Symbols Never Auto-Documented (Only Flagged)
 
 | Symbol Type | Behavior |
 |-------------|----------|
 | Any symbol with no docstring | Report as "Missing coverage", do NOT create docs |
-| Any symbol with no fence-marked README row | Skip README update, report |
+| Any symbol with no README mention | Skip README update, report |
 
 The skill updates existing documentation. It never creates from scratch.
 
 ## Content Never Modified
 
-### Unfenced README Sections
+### README Content (All Propose-Only)
 
-Any README content outside `<!-- doc-sync: start/end -->` markers:
+All README and markdown content is human territory. The skill proposes
+updates based on code span matches but never auto-writes:
 
 ```markdown
-# Project Name          ← NEVER TOUCH
+# Project Name          ← NEVER AUTO-WRITE
                         
-Introduction text...    ← NEVER TOUCH
+Introduction text...    ← NEVER AUTO-WRITE
 
-## Installation         ← NEVER TOUCH
+## API Reference        ← NEVER AUTO-WRITE
+API reference here      ← PROPOSE-ONLY (if code span match found)
 
-<!-- doc-sync: start -->
-API reference here      ← OK to modify
-<!-- doc-sync: end -->
-
-## Contributing         ← NEVER TOUCH
+## Contributing         ← NEVER AUTO-WRITE
 ```
 
 ### Human-Authored Docstring Content
@@ -109,7 +114,7 @@ Flag as `[NEEDS HUMAN REVIEW]` — behavioral changes require human judgment.
 
 | Operation | Why Forbidden |
 |-----------|---------------|
-| Insert fence markers | Requires human decision on scope |
+| Auto-write to markdown files | Human territory — propose-only |
 | Delete documentation | Removal needs human review |
 | Create new doc files | Scope creep, needs human decision |
 | Modify code | Documentation only |
@@ -126,7 +131,7 @@ Flag as `[NEEDS HUMAN REVIEW]` — behavioral changes require human judgment.
 
 Private symbols (`_func`, `__func`, `internal/pkg`) are **in scope** if they
 have an existing docstring. Update the docstring when their signature changes.
-Do NOT promote them to public documentation or add fence-marked README entries.
+Do NOT promote them to public documentation or add README entries.
 
 ### Renamed Symbols
 

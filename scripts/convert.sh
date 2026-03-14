@@ -39,16 +39,13 @@ DESCRIPTION=$(echo "$FRONTMATTER" | sed -n '/^description:/,/^[a-z]/p' | sed '$d
 
 # Read reference files for inclusion
 SCOPE_BOUNDS=""
-FENCE_FORMAT=""
 VERIFY_STEPS=""
 
 if [ -f "$SKILL_DIR/references/scope-bounds.md" ]; then
     SCOPE_BOUNDS=$(cat "$SKILL_DIR/references/scope-bounds.md")
 fi
 
-if [ -f "$SKILL_DIR/references/fence-format.md" ]; then
-    FENCE_FORMAT=$(cat "$SKILL_DIR/references/fence-format.md")
-fi
+
 
 if [ -f "$SKILL_DIR/references/verify-steps.md" ]; then
     VERIFY_STEPS=$(cat "$SKILL_DIR/references/verify-steps.md")
@@ -65,7 +62,7 @@ when—and only when—a caller-visible contract changes.
 ## Core Principles
 
 1. **Conservative by default**: Do less and flag more
-2. **Fence markers are sacred**: Never touch content outside fences
+2. **Docstrings auto-write, README propose-only**: Never auto-write markdown files
 3. **No guessing**: Flag uncertainty as [NEEDS HUMAN REVIEW]
 4. **Order matters**: Docstrings first, README sections second
 
@@ -80,12 +77,7 @@ if [ -n "$SCOPE_BOUNDS" ]; then
     echo "$SCOPE_BOUNDS" >> "$OUTPUT_DIR/.cursorrules"
 fi
 
-if [ -n "$FENCE_FORMAT" ]; then
-    echo "" >> "$OUTPUT_DIR/.cursorrules"
-    echo "---" >> "$OUTPUT_DIR/.cursorrules"
-    echo "" >> "$OUTPUT_DIR/.cursorrules"
-    echo "$FENCE_FORMAT" >> "$OUTPUT_DIR/.cursorrules"
-fi
+
 
 if [ -n "$VERIFY_STEPS" ]; then
     echo "" >> "$OUTPUT_DIR/.cursorrules"
@@ -123,10 +115,7 @@ if [ -n "$SCOPE_BOUNDS" ]; then
     echo "$SCOPE_BOUNDS" >> "$OUTPUT_DIR/.windsurfrules"
 fi
 
-if [ -n "$FENCE_FORMAT" ]; then
-    echo "" >> "$OUTPUT_DIR/.windsurfrules"
-    echo "$FENCE_FORMAT" >> "$OUTPUT_DIR/.windsurfrules"
-fi
+
 
 if [ -n "$VERIFY_STEPS" ]; then
     echo "" >> "$OUTPUT_DIR/.windsurfrules"
@@ -143,9 +132,9 @@ cat > "$OUTPUT_DIR/.agents-entry.md" << AGENTS_ENTRY
 
 | Trigger | Description |
 |---------|-------------|
-| \`/doc-sync\`, \`/docs\`, after commits changing public APIs | Updates inline docstrings and fence-marked README sections |
+| \`/doc-sync\`, \`/docs\`, after commits changing public APIs | Updates inline docstrings, proposes README updates |
 
-**Constraints**: Never modifies unfenced sections. Flags removals for human review. No auto-commit.
+**Constraints**: Never auto-writes markdown files. Flags removals for human review. No auto-commit.
 
 **Files**: \`doc-coauthoring/SKILL.md\`, \`doc-coauthoring/scripts/get_diff.sh\`
 AGENTS_ENTRY

@@ -14,15 +14,17 @@ historical context, carefully crafted examples — belongs to you. This skill
 exists to update the mechanical parts (signatures, parameter lists, type
 annotations) so you don't have to. It does not exist to replace your voice.
 
+**This skill never auto-writes markdown files.** All markdown updates are
+proposals requiring explicit human approval via `--apply`. Only inline
+docstrings (which are symbol-local and unambiguous) are auto-written.
+
 ## What We Protect
 
-### 1. Everything Outside Fence Markers
+### 1. All README and Markdown Content
 
-Fence markers (`<!-- doc-sync: start/end -->`) define machine territory.
-Everything outside those markers is human territory. We do not cross that line.
-
-If a section has no fence markers, we report it and stop. We do not insert
-markers ourselves. The decision to make content machine-managed is yours.
+All markdown content is human territory. We propose updates to sections
+that mention changed symbols, but we never auto-write to markdown files.
+You review and apply proposed changes yourself.
 
 ### 2. Your Examples
 
@@ -48,12 +50,13 @@ are append-only records. We never modify them.
 
 ## What We Update
 
-Only caller-visible contract documentation, and only within fenced regions:
+Only caller-visible contract documentation in **inline docstrings**:
 
 - **Parameter names and types** in docstrings when they change in code
-- **Return types** in docstrings when they change in code  
-- **Function signatures** in fenced README tables
+- **Return types** in docstrings when they change in code
 - **New symbol documentation** (but only structural — name, params, return)
+
+All README/markdown changes are **proposed**, never auto-written.
 
 ## How We Behave
 
@@ -66,7 +69,7 @@ A false negative (silently making a wrong change) is not.
 ### Transparent
 
 We report exactly what we changed and why. We report exactly what we flagged
-and why. We report what we skipped (missing fences) and why.
+and why. We report what we skipped and why.
 
 ### Reversible
 
@@ -82,11 +85,11 @@ we update one parameter's documentation. We do not "improve" adjacent content.
 
 By using this skill, you agree that:
 
-1. **Fenced content is machine-managed.** Don't hand-edit fenced sections
-   without understanding they may be overwritten on next sync.
+1. **Docstrings are auto-managed.** Inline docstrings for changed symbols
+   may be updated when contract changes are detected.
 
-2. **Unfenced content is human-managed.** We will never touch it without
-   your explicit instruction to add fences.
+2. **README content is human-managed.** We propose changes but never apply
+   them without your explicit review and approval.
 
 3. **Flags require action.** When we flag something `[NEEDS HUMAN REVIEW]`,
    you must address it. We will not proceed past flags automatically.
@@ -109,11 +112,10 @@ By maintaining this skill, we agree that:
 
 ## Questions & Answers
 
-**Q: What if I want to hand-edit a fenced section?**
+**Q: Can the skill ever auto-write to my README?**
 
-A: You can, but understand that your edits may be overwritten on the next
-sync if the corresponding code changes. Consider moving explanatory content
-outside the fence markers.
+A: No. All markdown/README updates are propose-only. The skill shows you
+what it would change and you decide whether to apply it.
 
 **Q: What if my documentation style doesn't match what the skill produces?**
 
@@ -132,4 +134,4 @@ Generated documentation should regenerate automatically from updated sources.
 
 ---
 
-*This contract is versioned with the skill. Current version: 1.0.0*
+*This contract is versioned with the skill. Current version: 2.0.0*

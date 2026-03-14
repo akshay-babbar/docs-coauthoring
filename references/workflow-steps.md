@@ -10,7 +10,7 @@ The skill supports two modes via `$ARGUMENTS`:
 | Mode | Command | Behavior |
 |------|---------|----------|
 | Dry-run (default) | `/doc-coauthoring --dry-run` or `/doc-coauthoring` | Detect and report changes only. No file writes. |
-| Apply | `/doc-coauthoring --apply` | Detect, report, and write patches. |
+| Apply | `/doc-coauthoring --apply` | Detect, report, and write docstring patches. Propose README updates. |
 
 **Always default to dry-run when `$ARGUMENTS` is empty or `--dry-run`.**
 Only write files when `--apply` is explicitly passed.
@@ -53,16 +53,14 @@ then apply the **ownership rule** to determine how changes are delivered:
 | Code change | Previously documented? | Action | Write mode |
 |-------------|------------------------|--------|------------|
 | Added parameter | Yes — has docstring | Update docstring | **auto-write** |
-| Added parameter | Yes — fenced README section | Update fenced section | **auto-write** |
-| Added parameter | Yes — unfenced README prose | Propose update to that section | **propose-only** |
+| Added parameter | Yes — mentioned in README code span | Propose README update | **propose-only** |
 | Added parameter | No | Report "Missing coverage" | report-only |
 | Changed return type | Yes — has docstring | Update docstring | **auto-write** |
-| Changed return type | Yes — fenced README section | Update fenced section | **auto-write** |
-| Changed return type | Yes — unfenced README prose | Propose update | **propose-only** |
+| Changed return type | Yes — mentioned in README code span | Propose README update | **propose-only** |
 | Changed return type | No | Report "Missing coverage" | report-only |
 | Body-only change | Yes — has docstring | Review docstring; update only if now false/incomplete | **auto-write** if stale |
 | Body-only change | No | Skip entirely | skip |
-| New symbol | Has docstring already | Add to fenced README section | **auto-write** |
+| New symbol | Has docstring already | Propose README mention | **propose-only** |
 | New symbol | No docstring | Report "Missing coverage" | report-only |
 | Removed symbol | Any | Flag `[NEEDS HUMAN REVIEW]`, **never delete** | human-review |
 | Renamed symbol | Any | Flag `[NEEDS HUMAN REVIEW]` | human-review |
@@ -71,14 +69,14 @@ then apply the **ownership rule** to determine how changes are delivered:
 
 ```
 Docstring in source file          → auto-write always
-Fenced README section             → auto-write always
-Unfenced README prose             → propose-only, never auto-written
+Markdown code span match          → propose-only always
+Prose mention without code span   → skip (low confidence)
 No documentation found            → report-only, nothing created
 ```
 
-This is the **trust boundary**: fences are the permission layer, not the discovery
-layer. The AI finds candidate sections everywhere; it overwrites only what it has
-permission to touch.
+Docstrings are symbol-local and unambiguous — safe to auto-write.
+README content is human-authored territory — always propose-only, regardless
+of whether it has any special markers.
 
 **Body-change nuance**: "Review for staleness" means inspect whether the existing
 docstring description contradicts the new behavior. If it does, update. If the
@@ -88,8 +86,8 @@ docstring is generic (e.g., "Connects to host") and still accurate, skip.
 A 1-line change in a documented function is in scope. A 1-line change in an
 undocumented function is not. Magnitude is irrelevant; prior documentation is what counts.
 
-**Scope rule**: A symbol is in scope if it **already has a docstring or fence-marked
-section** — regardless of visibility (public, private, internal).
+**Scope rule**: A symbol is in scope if it **already has a docstring or README
+mention** — regardless of visibility (public, private, internal).
 
 ## Step 2.5: Check Existing Documentation Coverage
 
@@ -116,23 +114,9 @@ Docstring indicators by language:
 
 Result: `HAS_DOCSTRING=true` or `HAS_DOCSTRING=false`
 
-### Check 2: Fenced README Coverage
+### Check 2: README Coverage (Code Span Match)
 
-Search all markdown files for the symbol name inside fence markers:
-
-```bash
-grep -rn "fn_name" *.md docs/ README.md 2>/dev/null || true
-# Then verify the match is inside <!-- doc-sync: start/end --> blocks
-```
-
-Result: `HAS_FENCE_ENTRY=true` or `HAS_FENCE_ENTRY=false`
-
-### Check 3: Unfenced README Candidate Discovery
-
-This is the lightweight symbol extractor for discovering candidate sections in
-mixed human-authored markdown. It is **non-optional** for the hybrid model.
-
-For each changed symbol `fn_name`, scan all markdown files for mentions:
+Search all markdown files for the symbol name inside backtick code spans:
 
 ```bash
 # Step A: Find markdown files that mention the symbol IN CODE SPANS (backticks)
@@ -141,33 +125,28 @@ grep -rln '\`fn_name\`' *.md docs/ README.md 2>/dev/null || true
 # Fallback: also check table cells with pipe delimiters
 grep -rln '| *fn_name *|\|| *\`fn_name\` *|' *.md docs/ README.md 2>/dev/null || true
 
-# Step B: For each match, determine whether it is inside a fence or not
-# If line is between <!-- doc-sync: start --> and <!-- doc-sync: end --> → fenced
-# Otherwise → unfenced
-
-# Step C: For unfenced matches, extract surrounding heading context
+# Step B: For each match, extract surrounding heading context
 grep -n '\`fn_name\`' README.md | head -5
 # Then read 5 lines above the match to identify the nearest markdown heading
 # This is the candidate section that would receive a proposed update
 ```
 
-**False-positive reduction (enforced, not advisory):**
-- **High confidence:** symbol appears in backtick code span (\`fn_name\`)
+**Confidence levels (enforced, not advisory):**
+- **High confidence:** symbol appears in backtick code span (`` `fn_name` ``)
 - **Medium confidence:** symbol appears in markdown table cell
 - **Low confidence:** bare symbol name in prose → **exclude from proposals**
 
-Only high and medium confidence matches are included in `UNFENCED_CANDIDATE_SECTIONS`.
+Only high and medium confidence matches are included in `CANDIDATE_SECTIONS`.
 
-Result: `UNFENCED_CANDIDATE_SECTIONS=[]` or a list of `(file, heading, line)` tuples
+Result: `CANDIDATE_SECTIONS=[]` or a list of `(file, heading, line)` tuples
 
 ### Coverage Decision
 
-| HAS_DOCSTRING | HAS_FENCE_ENTRY | UNFENCED_CANDIDATES | Previously Documented? | Write mode |
-|---------------|-----------------|---------------------|------------------------|------------|
-| true | any | any | **Yes** | auto-write docstring |
-| false | true | any | **Yes** | auto-write fenced section |
-| false | false | non-empty | **Partial** | propose-only to candidate sections |
-| false | false | empty | **No** | report "Missing coverage" only |
+| HAS_DOCSTRING | CANDIDATE_SECTIONS | Previously Documented? | Write mode |
+|---------------|---------------------|------------------------|------------|
+| true | any | **Yes** | auto-write docstring |
+| false | non-empty | **Partial** | propose-only to candidate sections |
+| false | empty | **No** | report "Missing coverage" only |
 
 ### Body-Only Change Detection
 
@@ -187,26 +166,11 @@ three conditions" but now there are four), flag it for update.
 If the description is generic ("Connects to host") and the body change does
 not contradict it, skip — no update needed.
 
-## Step 3: Validate Fence Markers
+## Step 3: Apply Updates (only if `--apply` mode)
 
-Before touching any markdown file, run the pre-check:
+**Order is mandatory — docstrings first, README proposals second.**
 
-```bash
-bash scripts/check-fences.sh <file>
-```
-
-Exit codes:
-- `0` — valid fence markers found, safe to proceed
-- `1` — no fence markers → **report and skip this file**
-- `2` — malformed markers (unpaired, nested) → **report and skip**
-
-Do NOT insert fence markers. Do NOT proceed past a non-zero exit code.
-
-## Step 4: Apply Updates (only if `--apply` mode)
-
-**Order is mandatory — docstrings first, README sections second.**
-
-### 4a. Update Docstrings/JSDoc
+### 3a. Update Docstrings/JSDoc
 
 Match existing style exactly. Only change the affected parameter or return:
 
@@ -237,21 +201,20 @@ Rules:
 - Do not add examples, notes, or see-also references
 - Do not reformat the entire docstring
 
-### 4b. Update Fenced README Sections
+### 3b. Propose README Updates
 
-Only modify content between `<!-- doc-sync: start -->` and `<!-- doc-sync: end -->`.
+For each candidate section found in Step 2.5 Check 2, generate a proposed
+patch in diff format. **Never auto-write to markdown files.**
 
 ```markdown
-<!-- doc-sync: start -->
-| Function | Parameters | Returns |
-|----------|------------|---------|
-| `connect(host, port)` | host: str, port: int | Connection |     ← update this row only
-<!-- doc-sync: end -->
+### Proposed
+- `connect` — README.md:47 — under heading "## API Reference"
+  ~ Detected code span mention. Proposed patch:
+  [patch shown here in diff format]
+  Review and apply manually if appropriate.
 ```
 
-Do not touch anything outside the fence markers, including adjacent whitespace.
-
-## Step 5: Verify (mandatory after every edit)
+## Step 4: Verify (mandatory after every edit)
 
 See `references/verify-steps.md` for the 3-point checklist:
 1. Symbol exists in codebase
@@ -260,7 +223,7 @@ See `references/verify-steps.md` for the 3-point checklist:
 
 Verification is **non-optional**. If a check fails, revert the edit and flag.
 
-## Step 6: Report Results
+## Step 5: Report Results
 
 **Unified format contract**: whether an entry was auto-written, proposed, flagged,
 or skipped, it always appears in the **same diff-style format**. This is non-negotiable
@@ -276,14 +239,11 @@ Mode: dry-run | apply
 ### Updated  (auto-write, --apply only; reads "Would Update" in --dry-run)
 - `connect` ─ path/to/file.py:14 ─ docstring
   + timeout: Connection timeout in seconds. Defaults to 30.
-- `connect` ─ README.md ─ fenced section (<!-- doc-sync -->)
-  ~ updated parameter table row
 
-### Proposed  (unfenced README sections; never auto-written)
+### Proposed  (README sections; never auto-written)
 - `connect` ─ README.md:47 ─ under heading "## API Reference"
-  ~ Detected usage section. Proposed patch:
+  ~ Detected code span mention. Proposed patch:
   [patch shown here in diff format]
-  Run with --apply to confirm, or add <!-- doc-sync --> fences to auto-manage.
 
 ### Flagged for Human Review
 - `removed_fn` ─ path/to/file.py ─ symbol not found in codebase
@@ -292,11 +252,11 @@ Mode: dry-run | apply
   ! Import references may be stale.
 
 ### Missing Coverage
-- `new_fn` ─ path/to/file.py:42 ─ no docstring or README entry found
+- `new_fn` ─ path/to/file.py:42 ─ no docstring or README mention found
   ✓ Nothing created.
 
 ### Skipped
-- docs/guide.md ─ no <!-- doc-sync --> markers; add fences to enable auto-sync
+- docs/guide.md ─ bare symbol mention without code span; low confidence
 
 ### No Changes
 (if nothing to report)
