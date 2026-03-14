@@ -1,1 +1,0 @@
-Update a documented exported TypeScript function’s return type in JSDoc while proposing (not rewriting) any README updates.
