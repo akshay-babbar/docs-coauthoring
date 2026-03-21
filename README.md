@@ -364,3 +364,6 @@ preserves context window space for other installed skills (progressive disclosur
 ## License
 
 Apache 2.0
+## API
+
+`get_diff(commit_range)` — runs git diff for a given range.
