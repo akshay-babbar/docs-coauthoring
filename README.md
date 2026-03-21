@@ -85,6 +85,15 @@ but does not substitute for Claude Code's mechanical hook enforcement. The skill
 V3 apply-mode confirmation checkpoint (show report → ask for explicit yes → then write)
 provides an additional safety layer across all platforms.
 
+### Bash Tool Scope
+
+The skill declares `allowed-tools: Bash(bash "${CLAUDE_SKILL_DIR}/scripts":*)` to
+restrict shell access to its own scripts. However, Claude Code's `allowed-tools`
+enforcement is [currently unreliable](https://github.com/anthropics/claude-code/issues/14956)
+— the scoping declaration is best-effort. The skill's prompt instructions confine
+Bash usage to `get_diff.sh`, but on Claude Code the tool permission may still
+prompt for approval depending on version.
+
 ### Generated Rule Context Overhead
 
 The `convert.sh` script emits static instruction files for prompt-based platforms.

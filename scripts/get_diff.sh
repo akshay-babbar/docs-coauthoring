@@ -256,38 +256,41 @@ while IFS= read -r file; do
             # Match: any function/const/let without 'export' that is added or changed
             PRIV_FUNCS=$(echo "$ADDED_LINES" | grep -E '^[+][ \t]*(async )?(function [a-zA-Z]|const [a-zA-Z][a-zA-Z0-9_]* *= *(async )?\()' | grep -vE '^[+]export ' || true)
             if [ -n "$PRIV_FUNCS" ]; then
-                # Check if the diff context contains JSDoc indicators near these functions
-                HAS_JSDOC=$(echo "$FILE_DIFF" | grep -c '/\*\*' || true)
-                if [ "$HAS_JSDOC" -gt 0 ]; then
-                    while IFS= read -r line; do
-                        [ -z "$line" ] && continue
-                        FNAME=$(echo "$line" | sed -E 's/^[+][ \t]*(async )?function ([a-zA-Z_][a-zA-Z0-9_]*).*/\2/; s/^[+][ \t]*(const|let) ([a-zA-Z_][a-zA-Z0-9_]*) *=.*/\2/')
+                # Per-function proximity check: only flag if /** appears within
+                # 5 lines before this function in the diff context. Avoids
+                # false positives from unrelated JSDoc elsewhere in the file.
+                while IFS= read -r line; do
+                    [ -z "$line" ] && continue
+                    FNAME=$(echo "$line" | sed -E 's/^[+][ \t]*(async )?function ([a-zA-Z_][a-zA-Z0-9_]*).*/\2/; s/^[+][ \t]*(const|let) ([a-zA-Z_][a-zA-Z0-9_]*) *=.*/\2/')
+                    NEARBY_JSDOC=$(echo "$FILE_DIFF" | grep -B5 -F "$line" | grep -c '/\*\*' || true)
+                    if [ "$NEARBY_JSDOC" -gt 0 ]; then
                         if [[ ! " ${NEW_FUNCTIONS[*]+${NEW_FUNCTIONS[*]}} " =~ " $file: $FNAME " ]] && \
                            [[ ! " ${ADDED_PARAMS[*]+${ADDED_PARAMS[*]}} " =~ " $file: $FNAME " ]]; then
                             ADDED_PARAMS+=("$file: $FNAME (documented-private)")
                             CHANGES_FOUND=1
                         fi
-                    done <<< "$PRIV_FUNCS"
-                fi
+                    fi
+                done <<< "$PRIV_FUNCS"
             fi
             ;;
         go)
             # Look for unexported (lowercase) functions near godoc comments in the diff
             PRIV_GO_FUNCS=$(echo "$ADDED_LINES" | grep -E '^[+]func [a-z][a-zA-Z0-9]*\(|^[+]func \([a-zA-Z].*\) [a-z][a-zA-Z0-9]*\(' || true)
             if [ -n "$PRIV_GO_FUNCS" ]; then
-                # Check if the diff context contains godoc-style comments
-                HAS_GODOC=$(echo "$FILE_DIFF" | grep -cE '^[ \t]*// [a-z]' || true)
-                if [ "$HAS_GODOC" -gt 0 ]; then
-                    while IFS= read -r line; do
-                        [ -z "$line" ] && continue
-                        FNAME=$(echo "$line" | sed -E 's/^[+]func ([a-z][a-zA-Z0-9]*).*/\1/; s/^[+]func \(.*\) ([a-z][a-zA-Z0-9]*).*/\1/')
+                # Per-function proximity check: only flag if a godoc comment
+                # (// lowercase) appears within 3 lines before this function.
+                while IFS= read -r line; do
+                    [ -z "$line" ] && continue
+                    FNAME=$(echo "$line" | sed -E 's/^[+]func ([a-z][a-zA-Z0-9]*).*/\1/; s/^[+]func \(.*\) ([a-z][a-zA-Z0-9]*).*/\1/')
+                    NEARBY_GODOC=$(echo "$FILE_DIFF" | grep -B3 -F "$line" | grep -cE '^[ \t]*// [a-z]' || true)
+                    if [ "$NEARBY_GODOC" -gt 0 ]; then
                         if [[ ! " ${NEW_FUNCTIONS[*]+${NEW_FUNCTIONS[*]}} " =~ " $file: $FNAME " ]] && \
                            [[ ! " ${ADDED_PARAMS[*]+${ADDED_PARAMS[*]}} " =~ " $file: $FNAME " ]]; then
                             ADDED_PARAMS+=("$file: $FNAME (documented-private)")
                             CHANGES_FOUND=1
                         fi
-                    done <<< "$PRIV_GO_FUNCS"
-                fi
+                    fi
+                done <<< "$PRIV_GO_FUNCS"
             fi
             ;;
     esac

@@ -51,6 +51,52 @@ if [ -f "$SKILL_DIR/references/verify-steps.md" ]; then
     VERIFY_STEPS=$(cat "$SKILL_DIR/references/verify-steps.md")
 fi
 
+# Condensed critical rules from workflow-steps.md.
+# The full file is too large (~300 lines) for static inclusion, but the
+# safety-critical behaviors MUST be present on prompt-based platforms.
+WORKFLOW_CRITICAL='## Apply-Mode Critical Rules (from workflow-steps.md)
+
+**Confirmation checkpoint (mandatory):**
+Even when `--apply` is passed, the workflow is: detect → classify → build the
+complete Doc Sync Report → **show the report and ask for confirmation** → only
+proceed to file writes on explicit approval.
+
+**Idempotency guard (mandatory):**
+Before writing any docstring update, read the current docstring state. If the
+parameter documentation already exists and matches the current signature, skip
+and report "Already current." This prevents duplicate entries when `--apply` is
+run twice on the same uncommitted diff.
+
+**Inferred description marker (mandatory for new descriptions):**
+When writing a new parameter or return description that did not exist before,
+append `[inferred — verify]` inline. This marker signals the description was
+inferred and needs human verification. Remove after review.
+
+**Report format (mandatory):**
+```
+## Doc Sync Report
+Mode: dry-run | apply
+
+### Updated / Would Update
+1. `symbol` ─ file:line ─ docstring
+   + param: description [inferred — verify]
+
+### Proposed (README; requires explicit approval)
+2. `symbol` ─ README.md:line ─ heading
+   ~ Proposed patch in diff format
+
+### Flagged for Human Review
+- `symbol` ─ file ─ reason
+  ! Action needed
+
+### No Changes
+✓ No contract changes detected.
+```
+
+**Confirmation prompt (apply mode, after showing report):**
+- 1 change: `Apply this change? (yes/no)`
+- 2+ changes: `Found N changes. Apply all (A), select by number (1, 3...), or skip (S)?`'
+
 # Generate Cursor project rule (modern format)
 mkdir -p "$OUTPUT_DIR/.cursor/rules"
 cat > "$OUTPUT_DIR/.cursor/rules/doc-coauthoring.mdc" << 'CURSOR_HEADER'
@@ -91,6 +137,11 @@ if [ -n "$VERIFY_STEPS" ]; then
     echo "$VERIFY_STEPS" >> "$OUTPUT_DIR/.cursor/rules/doc-coauthoring.mdc"
 fi
 
+echo "" >> "$OUTPUT_DIR/.cursor/rules/doc-coauthoring.mdc"
+echo "---" >> "$OUTPUT_DIR/.cursor/rules/doc-coauthoring.mdc"
+echo "" >> "$OUTPUT_DIR/.cursor/rules/doc-coauthoring.mdc"
+echo "$WORKFLOW_CRITICAL" >> "$OUTPUT_DIR/.cursor/rules/doc-coauthoring.mdc"
+
 echo "Generated: $OUTPUT_DIR/.cursor/rules/doc-coauthoring.mdc"
 
 # Legacy Cursor compatibility
@@ -129,6 +180,9 @@ if [ -n "$VERIFY_STEPS" ]; then
     echo "" >> "$OUTPUT_DIR/AGENTS.md"
     echo "$VERIFY_STEPS" >> "$OUTPUT_DIR/AGENTS.md"
 fi
+
+echo "" >> "$OUTPUT_DIR/AGENTS.md"
+echo "$WORKFLOW_CRITICAL" >> "$OUTPUT_DIR/AGENTS.md"
 
 echo "</doc_coauthoring_skill>" >> "$OUTPUT_DIR/AGENTS.md"
 

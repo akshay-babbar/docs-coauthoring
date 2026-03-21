@@ -15,7 +15,7 @@ license: Apache-2.0
 metadata:
   version: "3.0.0"
   author: doc-coauthoring
-allowed-tools: Read Edit Grep Bash
+allowed-tools: Read Edit Grep Bash(bash "${CLAUDE_SKILL_DIR}/scripts":*)
 argument-hint: "[--dry-run | --apply] [commit-range]"
 hooks:
   PreToolUse:
@@ -62,6 +62,8 @@ A symbol is in scope when **both** conditions are true:
 2. Its code changed
 
 This skill handles Python, TypeScript, JavaScript, Go, Rust, Ruby, Java, and Kotlin. Docstring formats vary by language — match the existing style exactly.
+
+**Write boundary**: In non-markdown source files, the only permitted edit is to docstring/JSDoc comment content. Function bodies, imports, logic, and all other code are never modified.
 
 **The binding vote principle**: past documentation is a vote on importance.
 A trivial 1-line body change in a documented function is in scope.

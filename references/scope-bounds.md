@@ -163,6 +163,12 @@ If `List` → `list` or `Dict` → `dict` (Python 3.9+ style):
 - Do NOT update documentation
 - These are internal style changes with identical behavior
 
+## Non-Standard Documentation Formats
+
+ReStructuredText (`.rst`), AsciiDoc (`.adoc`), and wiki-style markup are out of
+scope. The skill targets markdown (`.md`) and inline docstrings/JSDoc only. Repos
+using Sphinx RST or AsciiDoc should not expect coverage from this skill.
+
 ## The Golden Rule
 
 > When in doubt, flag it. A false positive (flagging something that didn't need review) is far better than a false negative (silently making a wrong change).
