@@ -1,0 +1,9 @@
+{
+  "name": "doc-sync",
+  "mode": "vendored",
+  "dependencies": {
+    "akshay-babbar/doc-sync": {
+      "source": "file:."
+    }
+  }
+}

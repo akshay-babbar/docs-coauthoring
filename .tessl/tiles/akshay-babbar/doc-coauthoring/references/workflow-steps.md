@@ -19,9 +19,10 @@ Only write files when `--apply` is explicitly passed.
 Even when `--apply` is passed, the workflow is: detect → classify → build the complete Doc Sync Report → **show the report and ask for confirmation** → only proceed to file writes on explicit approval. This ensures the user understands the intent before seeing diffs, regardless of platform.
 
 **Confirmation prompt format (terminal agents — Claude Code, OpenCode):**
-- If **1 change**: `Apply this change? (yes/no)`
-- If **2+ changes**: `Found N changes. Apply all (A), select by number (1, 3, 5...), or skip (S)?`
-- Every entry under Updated/Would Update and Proposed must be numbered in the report so the user can reference them by number.
+- Let `change_count` be the total number of entries in the Doc Sync Report under `Would Update` / `Updated` and `Proposed` combined.
+- If `change_count == 1`: use exactly `Apply this change? (yes/no)`.
+- If `change_count >= 2`: use `Found N changes. Apply all (A), select by number (1, 3, 5...), or skip (S)?` where `N == change_count`. **Do not** use the single-change yes/no prompt when more than one change is present.
+- Every entry under `Would Update` / `Updated` and `Proposed` must be numbered in the report so the user can reference them by number.
 - If the user selects by number, only apply those entries. All others are reported as Skipped.
 - In Windsurf/Cursor, the platform's accept/reject UI handles per-change selection at the diff level, so no numbered prompt is needed.
 

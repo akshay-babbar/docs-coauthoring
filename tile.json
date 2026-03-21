@@ -1,7 +1,7 @@
 {
   "name": "akshay-babbar/doc-sync",
   "version": "3.0.0",
-  "summary": "Updates inline docstrings and proposes README updates when documented symbols change. Conservative by design.",
+  "summary": "Auto-syncs docstrings and README when function signatures change. Detects stale docs after refactors, parameter additions, or return type changes. Dry-run by default — proposes before writing.",
   "private": false,
   "skills": {
     "doc-sync": {
