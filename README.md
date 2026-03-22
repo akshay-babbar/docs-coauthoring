@@ -57,6 +57,18 @@ npx tessl install akshay-babbar/doc-sync
 /doc-sync --apply      # write with confirmation
 ```
 
+### Checking Committed Changes
+
+By default, doc-sync checks uncommitted changes (working tree
+vs last commit). If your changes are already committed, specify
+a commit range:
+
+```bash
+/doc-sync --dry-run HEAD~1..HEAD    # check last commit
+/doc-sync --dry-run HEAD~3..HEAD    # check last 3 commits
+/doc-sync --apply HEAD~1..HEAD      # apply fixes for last commit
+```
+
 The markdown protection hook is pre-configured in `.claude/settings.json` and activates automatically when the skill is installed.
 
 > **Note:** If doc-sync appears twice in Claude Code's Skills panel, this is
