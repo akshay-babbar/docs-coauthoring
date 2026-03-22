@@ -4,4 +4,5 @@ tests/baseline_results.md
 
 *.tar.gz
 test_subject.py
+.DS_Store
 

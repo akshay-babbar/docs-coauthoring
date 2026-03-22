@@ -36,7 +36,12 @@ Arguments: [--dry-run | --apply] [commit-range]
 
 **Load timing:** After Step 1 completes and returns results, load `references/workflow-steps.md` before proceeding to Step 2. Do not load at startup — only when actively executing the workflow.
 
-1. Run `scripts/get_diff.sh $ARGUMENTS` to detect changes (default: all uncommitted)
+1. Locate and run `get_diff.sh` to detect changes (default: all uncommitted):
+   ```bash
+   SCRIPT=$(find "$(git rev-parse --show-toplevel)" -maxdepth 4 \
+     -name "get_diff.sh" -path "*/scripts/*" 2>/dev/null | head -1)
+   bash "$SCRIPT" $ARGUMENTS
+   ```
 2. Check existing doc coverage for every changed symbol (Step 2.5 in workflow-steps.md)
 3. Check for README candidate sections via symbol-name grep (Step 2.5 Check 2)
 4. Classify with two-factor + ownership test (Step 2 in workflow-steps.md)

@@ -42,25 +42,27 @@ flowchart LR
 ### Via Tessl (recommended)
 
 ```bash
-npx tessl add akshay-babbar/doc-sync
+npx tessl install akshay-babbar/doc-sync
 ```
 
-> **Note:** Tessl is a registry — like npm. It downloads the skill files.
-> You still need one step per agent below to activate it. It does not
-> auto-configure all agents on your machine simultaneously.
+> **Note:** Tessl installs the skill into all platform directories simultaneously
+> (`.claude/skills/`, `.cursor/skills/`, `.agents/skills/`, etc.) for cross-platform
+> compatibility. You still need the per-platform setup described below.
 
 ### Claude Code
 
 ```bash
-mkdir -p ~/.claude/skills
-cp -r doc-sync ~/.claude/skills/
-
 # Invoke
 /doc-sync --dry-run    # preview — no writes
 /doc-sync --apply      # write with confirmation
 ```
 
 The markdown protection hook is pre-configured in `.claude/settings.json` and activates automatically when the skill is installed.
+
+> **Note:** If doc-sync appears twice in Claude Code's Skills panel, this is
+> expected — Tessl installs to both `.claude/skills/` and `.agents/skills/`
+> for cross-platform compatibility. Both entries point to the same skill and
+> behave identically. You can safely ignore the duplicate.
 
 For automatic invocation after every commit:
 ```bash
@@ -74,17 +76,14 @@ chmod +x .git/hooks/post-commit
 
 ### Windsurf
 
-```bash
-cd doc-sync && ./scripts/convert.sh /path/to/your/project
-# Creates AGENTS.md in your project root
-```
+After running `tessl install`, doc-sync is automatically available in
+`.agents/skills/` — no manual setup needed. Windsurf reads skills from
+this directory automatically.
 
 ### Cursor
 
-```bash
-cd doc-sync && ./scripts/convert.sh /path/to/your/project
-# Creates .cursor/rules/doc-sync.mdc in your project
-```
+After running `tessl install`, doc-sync is automatically available in
+`.cursor/skills/` — no manual setup needed.
 
 ### OpenCode
 
