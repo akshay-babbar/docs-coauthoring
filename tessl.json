@@ -1,8 +1,8 @@
 {
-  "name": "doc-coauthoring",
+  "name": "doc-sync",
   "mode": "vendored",
   "dependencies": {
-    "akshay-babbar/doc-coauthoring": {
+    "akshay-babbar/doc-sync": {
       "source": "file:."
     }
   }

@@ -99,13 +99,13 @@ Mode: dry-run | apply
 
 # Generate Cursor project rule (modern format)
 mkdir -p "$OUTPUT_DIR/.cursor/rules"
-cat > "$OUTPUT_DIR/.cursor/rules/doc-coauthoring.mdc" << 'CURSOR_HEADER'
+cat > "$OUTPUT_DIR/.cursor/rules/doc-sync.mdc" << 'CURSOR_HEADER'
 ---
-description: Doc-coauthoring workflow for documentation drift after code changes
+description: Doc Sync workflow for documentation drift after code changes
 alwaysApply: false
 ---
 
-# Doc-Coauthoring Rules for Cursor
+# Doc Sync Rules for Cursor
 
 You are a surgical documentation updater. Your job is to patch documentation
 when—and only when—a caller-visible contract changes.
@@ -119,40 +119,40 @@ when—and only when—a caller-visible contract changes.
 
 CURSOR_HEADER
 
-echo "$BODY" >> "$OUTPUT_DIR/.cursor/rules/doc-coauthoring.mdc"
+echo "$BODY" >> "$OUTPUT_DIR/.cursor/rules/doc-sync.mdc"
 
 if [ -n "$SCOPE_BOUNDS" ]; then
-    echo "" >> "$OUTPUT_DIR/.cursor/rules/doc-coauthoring.mdc"
-    echo "---" >> "$OUTPUT_DIR/.cursor/rules/doc-coauthoring.mdc"
-    echo "" >> "$OUTPUT_DIR/.cursor/rules/doc-coauthoring.mdc"
-    echo "$SCOPE_BOUNDS" >> "$OUTPUT_DIR/.cursor/rules/doc-coauthoring.mdc"
+    echo "" >> "$OUTPUT_DIR/.cursor/rules/doc-sync.mdc"
+    echo "---" >> "$OUTPUT_DIR/.cursor/rules/doc-sync.mdc"
+    echo "" >> "$OUTPUT_DIR/.cursor/rules/doc-sync.mdc"
+    echo "$SCOPE_BOUNDS" >> "$OUTPUT_DIR/.cursor/rules/doc-sync.mdc"
 fi
 
 
 
 if [ -n "$VERIFY_STEPS" ]; then
-    echo "" >> "$OUTPUT_DIR/.cursor/rules/doc-coauthoring.mdc"
-    echo "---" >> "$OUTPUT_DIR/.cursor/rules/doc-coauthoring.mdc"
-    echo "" >> "$OUTPUT_DIR/.cursor/rules/doc-coauthoring.mdc"
-    echo "$VERIFY_STEPS" >> "$OUTPUT_DIR/.cursor/rules/doc-coauthoring.mdc"
+    echo "" >> "$OUTPUT_DIR/.cursor/rules/doc-sync.mdc"
+    echo "---" >> "$OUTPUT_DIR/.cursor/rules/doc-sync.mdc"
+    echo "" >> "$OUTPUT_DIR/.cursor/rules/doc-sync.mdc"
+    echo "$VERIFY_STEPS" >> "$OUTPUT_DIR/.cursor/rules/doc-sync.mdc"
 fi
 
-echo "" >> "$OUTPUT_DIR/.cursor/rules/doc-coauthoring.mdc"
-echo "---" >> "$OUTPUT_DIR/.cursor/rules/doc-coauthoring.mdc"
-echo "" >> "$OUTPUT_DIR/.cursor/rules/doc-coauthoring.mdc"
-echo "$WORKFLOW_CRITICAL" >> "$OUTPUT_DIR/.cursor/rules/doc-coauthoring.mdc"
+echo "" >> "$OUTPUT_DIR/.cursor/rules/doc-sync.mdc"
+echo "---" >> "$OUTPUT_DIR/.cursor/rules/doc-sync.mdc"
+echo "" >> "$OUTPUT_DIR/.cursor/rules/doc-sync.mdc"
+echo "$WORKFLOW_CRITICAL" >> "$OUTPUT_DIR/.cursor/rules/doc-sync.mdc"
 
-echo "Generated: $OUTPUT_DIR/.cursor/rules/doc-coauthoring.mdc"
+echo "Generated: $OUTPUT_DIR/.cursor/rules/doc-sync.mdc"
 
 # Legacy Cursor compatibility
-cp "$OUTPUT_DIR/.cursor/rules/doc-coauthoring.mdc" "$OUTPUT_DIR/.cursorrules"
+cp "$OUTPUT_DIR/.cursor/rules/doc-sync.mdc" "$OUTPUT_DIR/.cursorrules"
 echo "Generated: $OUTPUT_DIR/.cursorrules (legacy Cursor compatibility)"
 
 # Generate AGENTS.md (modern Windsurf/Cascade path)
 cat > "$OUTPUT_DIR/AGENTS.md" << 'WINDSURF_HEADER'
-# Doc-Coauthoring Instructions
+# Doc Sync Instructions
 
-<doc_coauthoring_skill>
+<doc_sync_skill>
 
 ## Identity
 
@@ -184,7 +184,7 @@ fi
 echo "" >> "$OUTPUT_DIR/AGENTS.md"
 echo "$WORKFLOW_CRITICAL" >> "$OUTPUT_DIR/AGENTS.md"
 
-echo "</doc_coauthoring_skill>" >> "$OUTPUT_DIR/AGENTS.md"
+echo "</doc_sync_skill>" >> "$OUTPUT_DIR/AGENTS.md"
 
 echo "Generated: $OUTPUT_DIR/AGENTS.md"
 
@@ -194,7 +194,7 @@ echo "Generated: $OUTPUT_DIR/.windsurfrules (legacy Windsurf compatibility)"
 
 # Generate AGENTS.md router entry (for repos using agents.md pattern)
 cat > "$OUTPUT_DIR/.agents-entry.md" << AGENTS_ENTRY
-## doc-coauthoring
+## doc-sync
 
 | Trigger | Description |
 |---------|-------------|
@@ -202,7 +202,7 @@ cat > "$OUTPUT_DIR/.agents-entry.md" << AGENTS_ENTRY
 
 **Constraints**: Requires explicit approval for markdown edits. Flags removals for human review. No auto-commit.
 
-**Files**: \`doc-coauthoring/SKILL.md\`, \`doc-coauthoring/scripts/get_diff.sh\`
+**Files**: `doc-sync/SKILL.md`, `doc-sync/scripts/get_diff.sh`
 AGENTS_ENTRY
 
 echo "Generated: $OUTPUT_DIR/.agents-entry.md (for AGENTS.md inclusion)"
@@ -212,7 +212,7 @@ echo ""
 echo "=== Conversion Complete ==="
 echo "Source:  $SKILL_FILE"
 echo "Outputs:"
-echo "  - .cursor/rules/doc-coauthoring.mdc  (Cursor project rule)"
+echo "  - .cursor/rules/doc-sync.mdc  (Cursor project rule)"
 echo "  - AGENTS.md                          (Windsurf/Cascade instructions)"
 echo "  - .cursorrules                       (legacy Cursor compatibility)"
 echo "  - .windsurfrules                     (legacy Windsurf compatibility)"

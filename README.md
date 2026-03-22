@@ -366,4 +366,4 @@ preserves context window space for other installed skills (progressive disclosur
 Apache 2.0
 ## API
 
-`get_diff(commit_range)` — runs git diff for a given range.
+`get_diff(commit_range, include_untracked=False)` — runs git diff for a given range.

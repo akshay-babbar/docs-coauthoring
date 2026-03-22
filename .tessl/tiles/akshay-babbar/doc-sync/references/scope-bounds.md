@@ -1,6 +1,6 @@
 # Scope Bounds
 
-This document defines what the doc-coauthoring skill will NOT touch.
+This document defines what the doc-sync skill will NOT touch.
 These boundaries are non-negotiable.
 
 ## What Is In Scope
@@ -38,6 +38,8 @@ to its callers inside the codebase, even if it is never exported.
 | `.github/*.md` | Issue/PR templates, community health files |
 
 ## Markdown Files — Propose-First
+
+See **SKILL.md § Ownership Rule** for the canonical ownership definition.
 
 All README and markdown documentation updates are **propose-first**. The skill
 finds symbol mentions in code spans (`` `fn_name` ``) and table cells, generates
@@ -113,7 +115,7 @@ coverage" or skip per the ownership rule, but do not create new documentation.
 
 | Operation | Why Forbidden |
 |-----------|---------------|
-| Auto-write to markdown files | Human territory — propose-only |
+| Apply markdown edits without explicit approval | Human territory — propose-first |
 | Delete documentation | Removal needs human review |
 | Create new doc files | Scope creep, needs human decision |
 | Modify code | Documentation only |

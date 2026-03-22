@@ -1,6 +1,6 @@
 # Preservation Contract
 
-This is the public social contract for the doc-coauthoring skill.
+This is the public social contract for the doc-sync skill.
 It defines what the skill promises to protect.
 
 ---

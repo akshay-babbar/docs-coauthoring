@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # get_diff.sh — Extract caller-visible contract changes from git diff
-# Part of doc-coauthoring skill. Detects parameter, return type, and symbol changes.
+# Part of doc-sync skill. Detects parameter, return type, and symbol changes.
 # Zero external dependencies. POSIX-compliant where possible.
 #
 # Usage:
@@ -359,6 +359,6 @@ echo "Param changes:    ${#ADDED_PARAMS[@]}"
 echo "Return changes:   ${#CHANGED_RETURNS[@]}"
 echo "Removed symbols:  ${#REMOVED_SYMBOLS[@]} (require review)"
 echo ""
-echo "Run doc-coauthoring to update documentation for these changes."
+echo "Run doc-sync to update documentation for these changes."
 
 exit 0

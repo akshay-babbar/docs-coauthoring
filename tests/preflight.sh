@@ -28,7 +28,7 @@ validate_scenario_dir() {
     for SCENARIO_DIR in "$root_dir"/*/; do
         [ ! -d "$SCENARIO_DIR" ] && continue
         scenario=$(basename "$SCENARIO_DIR")
-        ((TOTAL++))
+        TOTAL=$((TOTAL + 1))
         ERRORS=()
 
         [ ! -f "$SCENARIO_DIR/task.md" ] && ERRORS+=("missing task.md")
@@ -47,13 +47,13 @@ validate_scenario_dir() {
 
         if [ ${#ERRORS[@]} -eq 0 ]; then
             echo "PASS: [$label] $scenario"
-            ((PASSED++))
+            PASSED=$((PASSED + 1))
         else
             echo "FAIL: [$label] $scenario"
             for err in "${ERRORS[@]}"; do
                 echo "  $err"
             done
-            ((FAILED++))
+            FAILED=$((FAILED + 1))
         fi
     done
 }

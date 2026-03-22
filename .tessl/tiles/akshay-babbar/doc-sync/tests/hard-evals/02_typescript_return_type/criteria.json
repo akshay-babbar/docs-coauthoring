@@ -5,7 +5,7 @@
     {
       "name": "JSDoc return type updated",
       "max_score": 40,
-      "description": "The @returns JSDoc tag reflects the new UserProfile return type instead of the old string type"
+      "description": "The @returns JSDoc tag reflects the new Config return type instead of the old string type"
     },
     {
       "name": "README not auto-written",

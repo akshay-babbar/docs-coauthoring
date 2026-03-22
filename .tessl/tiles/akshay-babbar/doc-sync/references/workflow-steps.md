@@ -1,6 +1,6 @@
 # Workflow Steps
 
-Detailed execution steps for the doc-coauthoring skill. Load this file
+Detailed execution steps for the doc-sync skill. Load this file
 when executing the workflow. Do not load at startup.
 
 ## Invocation Modes
@@ -9,8 +9,8 @@ The skill supports two modes via `$ARGUMENTS`:
 
 | Mode | Command | Behavior |
 |------|---------|----------|
-| Dry-run (default) | `/doc-coauthoring --dry-run` or `/doc-coauthoring` | Detect and report changes only. No file writes. |
-| Apply | `/doc-coauthoring --apply` | Detect, report, and write docstring patches. Propose README updates. |
+| Dry-run (default) | `/doc-sync --dry-run` or `/doc-sync` | Detect and report changes only. No file writes. |
+| Apply | `/doc-sync --apply` | Detect, report, and write docstring patches. Propose README updates. |
 
 **Always default to dry-run when `$ARGUMENTS` is empty or `--dry-run`.**
 Only write files when `--apply` is explicitly passed.
@@ -76,22 +76,19 @@ then apply the **ownership rule** to determine how changes are delivered:
 | Removed symbol | Any | Flag `[NEEDS HUMAN REVIEW]`, **never delete** | human-review |
 | Renamed symbol | Any | Flag `[NEEDS HUMAN REVIEW]` | human-review |
 
-### Ownership Rule (what determines write mode)
+### Ownership Rule
 
-```
-Docstring in source file          → auto-write always
-Markdown code span match          → propose-first; only apply with explicit user approval
-Prose mention without code span   → skip (low confidence)
-No documentation found            → report-only, nothing created
-```
+See **SKILL.md § Ownership Rule** for the canonical definition. In summary:
+- Docstring in source file → auto-write
+- Markdown code span match → propose-first
+- Prose mention without code span → skip
+- No documentation found → report-only
 
-Docstrings are symbol-local and unambiguous — safe to auto-write.
-README content is human-authored territory — always propose-first, and only
-apply markdown edits with explicit user approval.
+**Body-change staleness check** (mechanical pre-filter, then semantic fallback):
 
-**Body-change nuance**: "Review for staleness" means inspect whether the existing
-docstring description contradicts the new behavior. If it does, update. If the
-docstring is generic (e.g., "Connects to host") and still accurate, skip.
+1. **Mechanical check (always run first):** Does the docstring contain a specific number or quantitative claim (e.g., "validates three conditions", "returns three fields", "retries up to 5 times") that is now falsified by the new code? If yes → update.
+2. **Semantic fallback (only if mechanical check is inconclusive):** Does the docstring description contradict the new behavior? If it does, update. If the docstring is generic (e.g., "Connects to host") and still accurate, skip.
+3. **When in doubt:** Skip. A false negative here (not catching a stale docstring) is recoverable; a false positive (rewriting an accurate docstring incorrectly) is worse.
 
 **The binding vote principle**: past documentation is a binding vote on importance.
 A 1-line change in a documented function is in scope. A 1-line change in an
@@ -151,6 +148,8 @@ Only high and medium confidence matches are included in `CANDIDATE_SECTIONS`.
 
 Result: `CANDIDATE_SECTIONS=[]` or a list of `(file, heading, line)` tuples
 
+**Persistence requirement:** Before proceeding to Step 3, include `CANDIDATE_SECTIONS` in the Doc Sync Report structure (under a `### Proposed` heading with placeholders). This ensures candidate sections survive context window pressure between Step 2.5 and Step 3b. Do not rely on the agent remembering them across steps.
+
 ### Coverage Decision
 
 | HAS_DOCSTRING | CANDIDATE_SECTIONS | Previously Documented? | Write mode |
@@ -177,7 +176,7 @@ three conditions" but now there are four), flag it for update.
 If the description is generic ("Connects to host") and the body change does
 not contradict it, skip — no update needed.
 
-## Step 3: Apply Updates (only if `--apply` mode)
+## Step 3: Apply Updates (only after confirmation in `--apply` mode)
 
 **Prerequisite:** The Doc Sync Report has been shown and the user has confirmed "yes" to apply.
 

@@ -1,4 +1,4 @@
-# doc-coauthoring
+# doc-sync
 
 A universal agentic skill that updates inline docstrings and proposes README
 updates when a **documented symbol's** contract changes. Conservative by design:
@@ -110,7 +110,7 @@ skill manually when needed.
 # From skill root
 npx tessl publish
 npx tessl skill review ./
-npx tessl eval run ./evals/
+tessl eval run .
 ```
 
 Tessl install / claim flows depend on your workspace permissions and current
@@ -121,12 +121,12 @@ before publishing public instructions.
 
 ```bash
 mkdir -p ~/.claude/skills
-cp -r doc-coauthoring ~/.claude/skills/
+cp -r doc-sync ~/.claude/skills/
 
 # Invoke
-/doc-coauthoring --dry-run     # preview (default)
-/doc-coauthoring --apply       # write with confirmation
-/doc-coauthoring --apply HEAD~3..HEAD  # specify commit range
+/doc-sync --dry-run     # preview (default)
+/doc-sync --apply       # write with confirmation
+/doc-sync --apply HEAD~3..HEAD  # specify commit range
 ```
 
 For truly automatic invocation after every commit, add this to `.git/hooks/post-commit`:
@@ -141,11 +141,11 @@ Make it executable: `chmod +x .git/hooks/post-commit`
 
 ```bash
 mkdir -p ~/.config/opencode/skills
-cp -r doc-coauthoring ~/.config/opencode/skills/
+cp -r doc-sync ~/.config/opencode/skills/
 
 # Invoke same as Claude Code
-/doc-coauthoring --dry-run
-/doc-coauthoring --apply
+/doc-sync --dry-run
+/doc-sync --apply
 ```
 
 For markdown protection in OpenCode, add to `opencode.json` in project root:
@@ -165,9 +165,9 @@ For markdown protection in OpenCode, add to `opencode.json` in project root:
 ### Cursor
 
 ```bash
-cd doc-coauthoring
+cd doc-sync
 ./scripts/convert.sh /path/to/your/project
-# Creates .cursor/rules/doc-coauthoring.mdc
+# Creates .cursor/rules/doc-sync.mdc
 # Also emits .cursorrules for legacy Cursor compatibility
 ```
 
@@ -176,7 +176,7 @@ Prefer `.cursor/rules/doc-coauthoring.mdc`. `.cursorrules` is legacy.
 ### Windsurf / Codeium
 
 ```bash
-cd doc-coauthoring
+cd doc-sync
 ./scripts/convert.sh /path/to/your/project
 # Creates AGENTS.md for repo-scoped Cascade instructions
 # Also emits .windsurfrules for legacy compatibility
@@ -191,15 +191,15 @@ the generated instructions or use `.agents-entry.md` as a snippet.
 
 ```bash
 # 1. (Optional) Run the diff script directly to see what changed
-bash doc-coauthoring/scripts/get_diff.sh
+bash doc-sync/scripts/get_diff.sh
 # Default: all tracked uncommitted changes (staged + unstaged vs HEAD)
 # Or specify a range: HEAD~3..HEAD
 
 # 2. Preview what the skill would update (no file writes)
-/doc-coauthoring --dry-run
+/doc-sync --dry-run
 
 # 3. Review the report, then apply
-/doc-coauthoring --apply
+/doc-sync --apply
 ```
 
 ### Example: Before and After
@@ -269,10 +269,10 @@ mkdir -p /tmp/eval-test && cd /tmp/eval-test
 bash setup.sh
 
 # 3. Install the skill locally
-cp -r /path/to/doc-coauthoring .
+cp -r /path/to/doc-sync .
 
 # 4. Invoke the skill as the eval specifies
-/doc-coauthoring --dry-run   # or --apply depending on the eval
+/doc-sync --dry-run   # or --apply depending on the eval
 
 # 5. Check your output against criteria.json
 #    Each criterion has a description and max_score.
@@ -282,10 +282,7 @@ cp -r /path/to/doc-coauthoring .
 ### Running All Evals via Tessl
 
 ```bash
-# Run evals for this tile (requires tile.json in the same folder as evals/)
 tessl eval run .
-# or explicitly:
-tessl eval run tile.json
 ```
 
 Use the hard-evals as a local quality gate in addition to the public Tessl evals.
@@ -323,7 +320,7 @@ The skill is designed to pass these scenarios:
 ## File Structure
 
 ```
-doc-coauthoring/
+doc-sync/
 ├── SKILL.md                   # Lean router (~200 tokens)
 ├── PRESERVATION.md            # Public social contract
 ├── README.md                  # This file
