@@ -9,12 +9,12 @@
     },
     {
       "name": "README not auto-written",
-      "max_score": 30,
+      "max_score": 60,
       "description": "README.md does NOT contain 'refreshToken' — the agent did NOT auto-write to the markdown file"
     },
     {
       "name": "New symbol with docstring handled",
-      "max_score": 20,
+      "max_score": 30,
       "description": "The report does NOT say 'Missing coverage' for refreshToken — it has a docstring so the action is a README proposal, not a missing coverage report"
     },
     {
@@ -24,7 +24,7 @@
     },
     {
       "name": "Existing function untouched",
-      "max_score": 10,
+      "max_score": 20,
       "description": "The report does NOT propose or apply any changes to validateToken (it was not modified)"
     }
   ]

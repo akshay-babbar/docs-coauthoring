@@ -4,17 +4,17 @@
   "checklist": [
     {
       "name": "Docstring updated",
-      "max_score": 35,
+      "max_score": 40,
       "description": "The build_summary docstring includes documentation for the new include_archived parameter"
     },
     {
       "name": "All markdown mentions proposed",
-      "max_score": 40,
+      "max_score": 60,
       "description": "The report contains separate propose-only entries for README.md, docs/usage.md, and docs/reference.md"
     },
     {
       "name": "Numbered entries present",
-      "max_score": 15,
+      "max_score": 20,
       "description": "The report numbers the Updated/Would Update and Proposed entries so the user can select them by number"
     },
     {

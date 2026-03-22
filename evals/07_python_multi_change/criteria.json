@@ -4,17 +4,17 @@
   "checklist": [
     {
       "name": "Documented function updated",
-      "max_score": 35,
+      "max_score": 30,
       "description": "The process_order docstring is updated to document the new dry_run parameter"
     },
     {
       "name": "Removed symbol flagged for review",
-      "max_score": 35,
+      "max_score": 50,
       "description": "The report flags deprecated_export as removed with [NEEDS HUMAN REVIEW] and preserves its documentation"
     },
     {
       "name": "Undocumented internal symbol skipped",
-      "max_score": 30,
+      "max_score": 50,
       "description": "The report does NOT attempt to document _internal_flush — it is skipped or ignored because it lacks prior documentation"
     }
   ]

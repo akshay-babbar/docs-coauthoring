@@ -1,0 +1,26 @@
+{
+  "context": "Agent must find a package-level README mention (packages/auth/README.md) and propose changes there, not the root README, when a documented package function signature changes.",
+  "type": "weighted_checklist",
+  "checklist": [
+    {
+      "name": "verify_token docstring updated",
+      "max_score": 40,
+      "description": "packages/auth/auth.py docstring documents the new expiry_seconds parameter"
+    },
+    {
+      "name": "Package README proposal made",
+      "max_score": 50,
+      "description": "doc-sync-report.md contains a Proposed entry referencing packages/auth/README.md — NOT root README.md"
+    },
+    {
+      "name": "Root README not touched",
+      "max_score": 40,
+      "description": "Root README.md is unchanged and not mentioned in proposals"
+    },
+    {
+      "name": "Unified report format",
+      "max_score": 10,
+      "description": "doc-sync-report.md contains '## Doc Sync Report' as a top-level heading"
+    }
+  ]
+}

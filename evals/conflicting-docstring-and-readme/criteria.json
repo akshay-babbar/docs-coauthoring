@@ -1,0 +1,26 @@
+{
+  "context": "Agent must handle a return type change when docstring and README describe the same symbol inconsistently: update the docstring to match the new return type, propose (not auto-write) the README update, and surface the discrepancy for human review.",
+  "type": "weighted_checklist",
+  "checklist": [
+    {
+      "name": "Docstring return type updated",
+      "max_score": 40,
+      "description": "calculate_fee docstring return section references Decimal, not int/float"
+    },
+    {
+      "name": "README update proposed not auto-written",
+      "max_score": 50,
+      "description": "doc-sync-report.md contains a Proposed entry for README.md and README.md is unchanged on disk"
+    },
+    {
+      "name": "Conflict or inconsistency surfaced",
+      "max_score": 40,
+      "description": "The report flags [NEEDS HUMAN REVIEW] and notes that the docstring and README previously described calculate_fee inconsistently"
+    },
+    {
+      "name": "Unified report format",
+      "max_score": 10,
+      "description": "doc-sync-report.md contains '## Doc Sync Report' as a top-level heading"
+    }
+  ]
+}

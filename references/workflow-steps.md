@@ -89,6 +89,7 @@ See **SKILL.md § Ownership Rule** for the canonical definition. In summary:
 1. **Mechanical check (always run first):** Does the docstring contain a specific number or quantitative claim (e.g., "validates three conditions", "returns three fields", "retries up to 5 times") that is now falsified by the new code? If yes → update.
 2. **Semantic fallback (only if mechanical check is inconclusive):** Does the docstring description contradict the new behavior? If it does, update. If the docstring is generic (e.g., "Connects to host") and still accurate, skip.
 3. **When in doubt:** Skip. A false negative here (not catching a stale docstring) is recoverable; a false positive (rewriting an accurate docstring incorrectly) is worse.
+4. **Contradictory docs:** If a docstring and a README entry describe the same symbol with contradictory information, flag as `[NEEDS HUMAN REVIEW]` and note the discrepancy in the report. Do not silently pick one source over the other.
 
 **The binding vote principle**: past documentation is a binding vote on importance.
 A 1-line change in a documented function is in scope. A 1-line change in an

@@ -4,22 +4,22 @@
   "checklist": [
     {
       "name": "Go doc comment updated",
-      "max_score": 25,
+      "max_score": 20,
       "description": "pkg/client/client.go doc comment for Connect includes documentation for the new timeout parameter"
     },
     {
       "name": "CHANGELOG not modified",
-      "max_score": 25,
+      "max_score": 50,
       "description": "CHANGELOG.md is byte-for-byte identical to the baseline — the agent did NOT write to it, propose changes to it, or mention updating it"
     },
     {
       "name": "ADR not modified",
-      "max_score": 20,
+      "max_score": 40,
       "description": "decisions/adr-003-api-design.md is byte-for-byte identical to the baseline — the agent did NOT write to or propose changes to the ADR file"
     },
     {
       "name": "CHANGELOG absent from report proposals",
-      "max_score": 20,
+      "max_score": 40,
       "description": "doc-sync-report.md does NOT list CHANGELOG.md under 'Proposed' or 'Would Update' — CHANGELOG is not a candidate for proposals"
     },
     {
