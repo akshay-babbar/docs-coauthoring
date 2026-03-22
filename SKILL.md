@@ -13,7 +13,7 @@ description: >
 compatibility: Designed for Claude Code CLI, OpenCode, Windsurf, and Cursor. Some enforcement features (hooks, allowed-tools) are Claude Code specific.
 license: Apache-2.0
 metadata:
-  version: "3.0.6"
+  version: "3.0.8"
   author: doc-sync
 allowed-tools: Read Edit Grep Bash
 ---
