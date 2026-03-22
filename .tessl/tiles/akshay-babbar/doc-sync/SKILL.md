@@ -38,7 +38,7 @@ Arguments: [--dry-run | --apply] [commit-range]
 
 1. Locate and run `get_diff.sh` to detect changes (default: all uncommitted):
    ```bash
-   SCRIPT=$(find "$(git rev-parse --show-toplevel)" -maxdepth 8 \
+   SCRIPT=$(find "$(git rev-parse --show-toplevel)" -maxdepth 6 \
   -name "get_diff.sh" -path "*/scripts/*" 2>/dev/null | head -1)
    bash "$SCRIPT" $ARGUMENTS
    ```
