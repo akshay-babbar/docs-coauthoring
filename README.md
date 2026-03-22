@@ -1,4 +1,5 @@
 # doc-sync
+[![doc-sync](https://img.shields.io/endpoint?url=https%3A%2F%2Fapi.tessl.io%2Fv1%2Fbadges%2Fakshay-babbar%2Fdoc-sync)](https://tessl.io/registry/akshay-babbar/doc-sync)
 
 An agentic skill for Claude Code, Windsurf, Cursor, and OpenCode that
 auto-syncs docstrings and README when your code changes. When a function
