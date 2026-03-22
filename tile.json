@@ -1,8 +1,8 @@
 {
   "name": "akshay-babbar/doc-sync",
-  "version": "3.0.7",
+  "version": "3.0.6",
   "summary": "Auto-syncs stale docstrings and README when function signatures change. Detects documentation drift after refactors, parameter additions, or return type changes. Dry-run by default — proposes before writing.",
-  "private": true,
+  "private": false,
   "skills": {
     "doc-sync": {
       "path": "SKILL.md"
